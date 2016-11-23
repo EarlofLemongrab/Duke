@@ -12,7 +12,7 @@ from threading import Thread, Lock
 
 # define worker class that implements thread
 # base from http://code.activestate.com/recipes/577187-python-thread-pool/
-class Worker(Thread):
+class Worker(Thread):#Worker inheritate Thread,then run method
     """Thread executing tasks from a given tasks queue"""
     def __init__(self, requests, server):
         Thread.__init__(self)
@@ -26,7 +26,7 @@ class Worker(Thread):
         self.start()
 
     # function run indefinitely once thread is started
-    def run(self):
+    def run(self):#each worker execute message
         while True:
             # pop an element from the queue
             (conn, addr) = self.requests.get()
@@ -52,6 +52,7 @@ class TcpServer(object):
 
     def __init__(self, port):
         # create socket
+        print "TCP Init"
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
@@ -64,21 +65,22 @@ class TcpServer(object):
         # bind to port and listen for connections
         s.bind(("0.0.0.0", port)) 
         (self.ip, self.port) = s.getsockname()
-        s.listen(5)
+        s.listen(5)# max listen to 5 connection
 
         # create initial workers
         for _ in range(int(self.MIN_THREADS)): 
-            Worker(self.requests, self)
+            Worker(self.requests, self)# initail MIN_THREADS num of threads to deal request
 
         # continuous loop to keep accepting requests
-        while 1:
+        while 1:# Keep get request from connection
             # accept a connection request
             conn, addr = s.accept()
             self.accept(conn, addr)
 
     # accept connection request from socket
-    def accept(self, conn, addr):
+    def accept(self, conn, addr):#NOT UNDERSTAND size
         # cache queue size and get threshold
+        print "TCP accept"
         qsize = self.requests.qsize()
         queue_margin = int(math.ceil(self.num_threads * (self.QUEUE_THRESHOLD / 100.0)))
 
@@ -104,16 +106,19 @@ class TcpServer(object):
     
     # create hash of string
     def hash_str(self, string):
+        print "TCP hash: "+string+" |\n"
         sha = hashlib.sha1(string)
         return sha.hexdigest()
 
     # function to get message text from a connection
     def extract_msg(self, conn, addr):
+        print "TCP extract_msg"
         while conn:
             msg = ""
             # Loop through message to receive data
             while "\n\n" not in msg and conn:
                 data = conn.recv(4096)
+                print "Got DATA "+data +"\n"
                 msg += data
                 if len(data) < 4096:
                     break
@@ -126,6 +131,7 @@ class TcpServer(object):
 
     # send message back to connection
     def send_msg(self, conn, data):
+        print "TCP send_msg"
         # supress replication server messages
         if not hasattr(self, 'is_slave') or self.is_slave == False:
             print "Sent: \"" + data.rstrip('\n') + "\""
@@ -133,6 +139,7 @@ class TcpServer(object):
 
     # read the request message from the input
     def get_req(self, conn, msg):
+        print "TCP get_req"
         # supress replication server messages
         if not hasattr(self, 'is_slave') or self.is_slave == False:
             print "Received: \"" + msg.rstrip('\n') + "\""
@@ -150,6 +157,7 @@ class TcpServer(object):
 
     # send message to server
     def propagate_msg(self, request, vars, server, response_required=True):
+        print "TCP propagate_msg"
         # connect to socket
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect(("localhost", server)) 

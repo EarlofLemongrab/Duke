@@ -11,45 +11,38 @@ class DirectoryServer(TcpServer):
     # override request processing function
     def process_req(self, conn, request, vars):
         # requesting file details from directory
-        
         print vars
         print "var0:" + vars[0]
         print "var1:" +vars[1]
         print "var2:" +vars[2]
-        
-        print "DIR_SERVER start"
         if request == config.REQUEST_FILE_DETAILS:
-            #try:
+            try:
                 # add folder to directory listing if writing
                 if vars[2] == 'WRITE':
                     # check if folder exists in directory listing
-                    if vars[1] not in self.folders:
+                    if vars[0] not in self.folders:
                         
                         # if not then assign folder to random server
                         random_server_port = random.choice(self.servers)
                         self.folders[vars[1]] = {'id' : self.hash_str(self.ip + str(random_server_port) + vars[1]), 'ip' : self.ip, 'port' : str(random_server_port), 'files' : [vars[0]]}
-                        print "files hassss \n"
-                        print vars[1]
-                        print str(self.folders[vars[1]])
-                        print "\n"
+                
                 # return directory id and location
                 response = self.folders[vars[1]]
-                #print "resp is " + str(response)
+                print "resp is " + str(response)
                 
                 # check if file in directory
                 if vars[0] in response['files']:
-                    print "Find file\n"
+                    print "Find"
                     self.send_msg(conn, config.RETURN_FILE_DETAILS.format(response['id'], response['ip'], response['port']))
                     return
                 else:
-                    print "NOT FIND File\n"
+                    print "NOT FIND\n"
                     self.error(conn, "File not found.")
-        
-        print "Dir Server Over\n"    
-            #except KeyError:
+            '''
+            except KeyError:
                 # return file not found if file_id key not in files dict
-             #   self.error(conn, "File not found.")
-                
+                self.error(conn, "File not found.")
+                '''
 def main():
     print "Directory Server started on " + str(config.DIR_SERVER)
     server = DirectoryServer(config.DIR_SERVER)

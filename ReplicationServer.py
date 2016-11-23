@@ -30,7 +30,9 @@ class ReplicationServer(TcpServer):
     # override request processing function
     def process_req(self, conn, request, vars):
         # requesting file data from replication server
-        print "STR: "+str(self)
+        print "From ReplicationServer process_req"
+        print "Replication has file" + str(self.files)
+        print "Replication has slaves "+ str(self.slaves)
         if request == config.READ_FILE or request == config.WRITE_FILE or request == config.DELETE_FILE:
             file_id = vars[0]
             client = vars[1]
@@ -64,7 +66,6 @@ class ReplicationServer(TcpServer):
 
             else:
                 # check if file exists for read and delete
-                print str(self.files)
                 if file_id in self.files:
 
                     # check with lock server for permission

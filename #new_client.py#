@@ -1,4 +1,3 @@
-
 import socket
 import sys
 import config
@@ -14,6 +13,7 @@ def send_req(ip, port, data):
     s.connect((ip, port)) 
     s.settimeout(2)
     s.sendall(data)
+
     print "Sent: \"" + data.rstrip('\n') + "\""
     return get_req(s.recv(2048))
 
@@ -27,22 +27,26 @@ def get_req(msg):
         if m:
             matched_request = r
             matched_vars = m.groups()
+            
     return (matched_request, matched_vars)
 
 # print connection instructions
 print "Client Proxy Interface"
 print "======================"
-name = raw_input("Enter client name: ")
 
+name = raw_input("Enter client name: ")
+file_address = raw_input("File address: ")
 # get file details from directory server
-(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format("d.txt", "Desktop", "WRITE"))
+(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format("test.txt", "Desktop", "WRITE"))
 file_id = vars[0]
 file_ip = vars[1]
 file_port = int(vars[2])
 raw_input("Press Enter to continue...\n")
 
+
+
 # write file to server
-file = open('d.txt', 'r')
+file = open(file_address, 'r')
 send_req(file_ip, file_port, config.WRITE_FILE.format(file_id, name, file.read()))
 raw_input("Press Enter to continue...\n")
 
@@ -57,3 +61,4 @@ raw_input("Press Enter to continue...\n")
 # unlock file
 send_req("localhost", config.LOCK_SERVER, config.REQUEST_UNLOCK.format(file_id, name))
 raw_input("Press Enter to continue...\n")
+

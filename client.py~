@@ -35,14 +35,14 @@ print "======================"
 name = raw_input("Enter client name: ")
 
 # get file details from directory server
-(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format("d.txt", "Desktop", "WRITE"))
+(req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format("c.txt", "Desktop", "WRITE"))
 file_id = vars[0]
 file_ip = vars[1]
 file_port = int(vars[2])
 raw_input("Press Enter to continue...\n")
 
 # write file to server
-file = open('d.txt', 'r')
+file = open('c.txt', 'r')
 send_req(file_ip, file_port, config.WRITE_FILE.format(file_id, name, file.read()))
 raw_input("Press Enter to continue...\n")
 
