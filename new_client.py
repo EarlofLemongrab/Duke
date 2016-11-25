@@ -73,7 +73,17 @@ while(End_condition=='Y'):
         file_id = vars[0]
         file_ip = vars[1]
         file_port = int(vars[2])
-        send_req(file_ip, file_port, config.READ_FILE.format(file_id, name))
+        res = send_req(file_ip, file_port, config.READ_FILE.format(file_id, name))
+        iF_DOWNLOAD = raw_input("DO you want to download? Y for yes; N for No\n")
+        if(iF_DOWNLOAD=='N'):continue
+        elif(iF_DOWNLOAD=='Y'):
+            print "Res :"+str(res)
+            splited_data = res[1][0];
+            downloaded_file_name = raw_input("Please specify your file name\n")
+        #store_data = splited_data[-1]
+            store_file = open(downloaded_file_name,'w')
+            store_file.write(str(splited_data))
+        
 
     elif(command=='D'):
         (req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format(file_address, file_store_address, "WRITE"))
@@ -85,7 +95,20 @@ while(End_condition=='Y'):
         file_port = int(vars[2])
         send_req(file_ip, file_port, config.DELETE_FILE.format(file_id, name))
 
-    
+    elif(command=='X'):
+        (req, vars) = send_req("localhost", config.DIR_SERVER, config.REQUEST_FILE_DETAILS.format(file_address, file_store_address, "WRITE"))
+        if(vars is None):
+            print "No Such File in storage\n"
+            continue;
+        file_id = vars[0]
+        file_ip = vars[1]
+        file_port = int(vars[2])
+        res = send_req(file_ip, file_port, config.READ_FILE.format(file_id, name))
+        print "Res :"+str(res)
+        splited_data = res[1][0];
+        #store_data = splited_data[-1]
+        store_file = open('Saved.txt','w')
+        store_file.write(str(splited_data))
 
     
     End_condition = raw_input("Y for continue, Else press any button...")

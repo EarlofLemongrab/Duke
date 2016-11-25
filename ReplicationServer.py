@@ -15,7 +15,7 @@ class ReplicationSlave(Thread):
         ReplicationServer(self.port)
 
 class ReplicationServer(TcpServer):
-    messages = {config.READ_FILE, config.WRITE_FILE, config.DELETE_FILE, config.SUCCESS, config.FAILURE}
+    messages = {config.READ_FILE, config.WRITE_FILE, config.DELETE_FILE, config.SUCCESS, config.FAILURE,config.DOWNLOAD_FILE}
     slaves = []
     files = {}
 
@@ -33,7 +33,7 @@ class ReplicationServer(TcpServer):
         print "From ReplicationServer process_req"
         print "Replication has file" + str(self.files)
         print "Replication has slaves "+ str(self.slaves)
-        if request == config.READ_FILE or request == config.WRITE_FILE or request == config.DELETE_FILE:
+        if request == config.READ_FILE or request == config.WRITE_FILE or request == config.DELETE_FILE or request == config.DOWNLOAD_FILE:
             file_id = vars[0]
             client = vars[1]
 

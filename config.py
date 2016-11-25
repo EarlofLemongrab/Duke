@@ -23,6 +23,8 @@ WRITE_FILE = 'WRITE_FILE: {}\nCLIENT: {}\nDATA: {}\n\n'
 READ_FILE = 'READ_FILE: {}\nCLIENT: {}\n\n'
 DELETE_FILE = 'DELETE_FILE: {}\nCLIENT: {}\n\n'
 RETURN_FILE_DATA = 'RETURN_FILE_DATA: {}\n\n'
+DOWNLOAD_FILE = 'DOWNLOAD_FILE: {}\nCLIENT: {}\n\n'
+
 
 # status messages
 SUCCESS = 'SUCCESS: {}\n\n'
